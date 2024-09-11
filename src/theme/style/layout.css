@@ -1,0 +1,8 @@
+#stepin-app .stepin-view .stepin-layout-content .stepin-view-main .stepin-tabs-view-content-main {
+  transition: all 0.25s ease-in;
+  display: unset!important;
+}
+#stepin-app .stepin-view.unbounded .stepin-layout-content .stepin-view-main .stepin-tabs-view-content-main {
+  @apply bg-transparent p-0;
+  display: unset!important;
+}
