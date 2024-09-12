@@ -63,6 +63,17 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/todo')
   },
   {
+    name: 'test',
+    path: '/test',
+    meta: {
+      title: '测试页面',
+      icon: 'BookOutlined',
+      target: '_self',
+      renderMenu: true,
+    },
+    component: () => import('@/pages/test')
+  },
+  {
     path: '/403',
     name: '403',
     props: true,

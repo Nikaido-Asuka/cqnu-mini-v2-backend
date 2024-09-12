@@ -6,10 +6,11 @@
 <script lang="ts" setup>
   import LoginBox from './LoginBox.vue';
   import { useRouter } from 'vue-router';
+  import { openNotificationWithIcon } from '@/utils/notification';
 
   const router = useRouter();
   function onLoginSuccess() {
-    console.log("???");
+    openNotificationWithIcon('success', '登录成功', '欢迎回来');
     router.push('/workplace');
   }
 </script>

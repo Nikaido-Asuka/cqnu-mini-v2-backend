@@ -4,6 +4,8 @@ import { Response } from '@/types';
 import { useMenuStore } from './menu';
 import { useAuthStore } from '@/plugins';
 import { useLoadingStore } from './loading';
+import { openMessage } from '@/utils/message'
+
 
 export interface Profile {
   account: Account;
@@ -35,6 +37,12 @@ export const useAccountStore = defineStore('account', {
         .request('/user/admin/v1/login', 'post_json', body)
         .then(async (response) => {
           console.log("response", response);
+          if (response.code === 'A000116'){
+            openMessage('error', '用户名或密码错误！');
+          }
+          if (response.code === 500) {
+            openMessage('error', '网络连接错误！');
+          }
           if (response.code === 200) {
             this.logged = true;
             http.setAuthentication(`${response.data.data}`, 30);

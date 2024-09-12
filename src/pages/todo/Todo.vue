@@ -1,23 +1,22 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue';
-import { DownOutlined, UpOutlined } from '@ant-design/icons-vue';
-import type { FormInstance } from 'ant-design-vue';
-
-// moment
-import moment from 'moment'
+import { message, type FormInstance } from 'ant-design-vue';
+import type { UploadFile } from 'ant-design-vue';
 
 // dayjs
 import dayjs, { Dayjs } from 'dayjs';
 
 // utils
 import { openNotificationWithIcon } from '@/utils/notification'
+import { beforeUpload } from '@/utils/utils';
 
 // constants
 import { columns, timespan, tagColor } from './constants'
 
 // api
 import { getTodoList, removeTodoById, updateTodo } from '@/api/todo'
-import Todo from '.';
+import { upLoadFile } from '@/api/upload'
+import Todo from '.'
 
 // interface
 interface Tag {
@@ -77,37 +76,40 @@ const formState = reactive<SearchBody>({
   pageSize: pagination.pageSize,
 });
 
-const handleSearch = () => {
+const handleSearch = async () => {
 
-const courseName = formState.courseName && formState.courseName
-    ? formState.courseName
-    : '';
+  const courseName = formState.courseName && formState.courseName
+      ? formState.courseName
+      : '';
 
-const startDate = formState.timespan && formState.timespan[0]
-    ? dayjs(formState.timespan[0]).format('YYYY-MM-DD HH:mm:ss')
-    : '';
+  const startDate = formState.timespan && formState.timespan[0]
+      ? dayjs(formState.timespan[0]).format('YYYY-MM-DD HH:mm:ss')
+      : '';
 
-const endDate = formState.timespan && formState.timespan[1]
-    ? dayjs(formState.timespan[1]).format('YYYY-MM-DD HH:mm:ss')
-    : '';
+  const endDate = formState.timespan && formState.timespan[1]
+      ? dayjs(formState.timespan[1]).format('YYYY-MM-DD HH:mm:ss')
+      : '';
 
-const body = {
-    courseName,
-    startDate,
-    endDate,
-    current: pagination.current,
-    pageSize: pagination.pageSize,
-};
+  const body = {
+      courseName,
+      startDate,
+      endDate,
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+  };
 
-getTodoList(body).then((res) => {
-    const { data : { data } } = res;
-    dataSource.value = data.noteRespIPage.records;
-    pagination.total = data.totalCount;
-    openNotificationWithIcon('success', '查询成功', '查询成功');
-}).catch((e) => {
-
-    openNotificationWithIcon('error', '查询失败', e.message);
-});
+  try{
+      let res = await getTodoList(body);
+      console.log(res);
+      if (res.data.code === "0") {
+        const { data: { data } } = res;
+        dataSource.value = data.noteRespIPage.records;
+        pagination.total = data.totalCount;
+        openNotificationWithIcon("success", "查询成功！", "查询成功！");
+      } 
+  }catch(err){
+      openNotificationWithIcon('error', '获取数据失败', err.message);
+  }
 }
 
 
@@ -135,12 +137,10 @@ const handleCancel = () => {
 const handleConfirm = () => {
     previewData.value.tagList = previewData.value.tagList.filter(item => !removeTagList.value.includes(item.id));
     previewData.value.deadline = previewData.value.deadline.format('YYYY-MM-DD HH:mm:ss');
+    console.log(previewData.value);
 
     // 调用修改接口
     updateTodo(previewData.value).then(res => {
-      
-
-      console.log(res);
       open.value = false;
       previewData.value = null;
       removeTagList.value = [];
@@ -165,6 +165,35 @@ const handleTagClose = (id: number) => {
     removeTagList.value.push(id);
 }
 
+
+// 图片上传相关
+import { useUploadFile } from '@/hooks/useUploadFile'
+const { loading, imageUrl, handleChange } = useUploadFile();
+const fileList = ref<UploadFile[]>([]);
+
+const customRequest = async (options) => {
+    console.log(options);
+    const { file, onSuccess, onError, onProgress } = options;
+
+    const formData = new FormData();
+    formData.append('uploadFile', file as any);
+    formData.append('bucket', 'cqminiv2-imgs');
+    formData.append('objectName', 'note');
+
+    try{
+        let res = await upLoadFile(formData);
+        console.log(res);
+        console.log(imageUrl);
+        if (res.data.code === "0") {
+            imageUrl.value = res.data.data;
+            previewData.value.imagesUrl.push(res.data.data);
+            openNotificationWithIcon("success", "上传成功！", "文件上传成功！");
+        }
+    }catch(err) {
+        message.error("上传失败!")
+    }
+
+};
 
 </script>
 
@@ -293,7 +322,24 @@ const handleTagClose = (id: number) => {
             name="imagesUrl"
             label="小记图片"
           >
-            <img class=" w-full rounded-[8px]" :src="previewData.imagesUrl[0]" alt=""/> 
+          <div>
+            <a-upload
+                v-model:file-list="fileList"
+                name="file"
+                :show-upload-list="false"
+                :custom-request="customRequest"
+                :before-upload="beforeUpload"
+                @change="handleChange"
+            >
+                <img class=" w-[485px] h-[250px]" v-if="imageUrl" :src="imageUrl" alt="note-img" />
+                <div class=" w-[485px] h-[250px] text-[30px]  rounded-[8px] bg-[#efefef] flex flex-col justify-center items-center gap-2"  v-else>
+                    <loading-outlined class=" text-[40px]" v-if="loading"></loading-outlined>
+                    <download-outlined class=" text-[40px]" v-else></download-outlined>
+                    <div>上传</div>
+                </div>
+            </a-upload>
+          </div>
+            
           </a-form-item>
 
           <a-form-item

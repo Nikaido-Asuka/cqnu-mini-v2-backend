@@ -79,15 +79,15 @@
   function login(params: LoginFormProps) {
     loading.value = true;
 
-    // const body = {
-    //   studentId: form.username,
-    //   password: encryptLinker(form.password),
-    // }
-
     const body = {
-        studentId: "2021404224421",
-        password: encryptLinker("123456"),
+      studentId: form.username,
+      password: encryptLinker(form.password),
     }
+
+    // const body = {
+    //     studentId: "2021404224421",
+    //     password: encryptLinker("123456"),
+    // }
 
     accountStore
       .login(body)
