@@ -1,68 +1,67 @@
 <template>
     <div>
-        <a-upload
-            v-model:file-list="fileList"
-            name="file"
-            :show-upload-list="false"
-            :custom-request="customRequest"
-            :before-upload="beforeUpload"
-            @change="handleChange"
-        >
-            <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-            <div class=" w-[200px] h-[100px] rounded-[8px] bg-[#efefef] flex flex-col justify-center items-center"  v-else>
-                <loading-outlined v-if="loading"></loading-outlined>
-                <plus-outlined v-else></plus-outlined>
-                <div class="ant-upload-text">Upload</div>
-            </div>
-        </a-upload>
+      <a-button type="primary" @click="visible = true">New Collection</a-button>
+      <a-modal
+        v-model:visible="visible"
+        title="Create a new collection"
+        ok-text="Create"
+        cancel-text="Cancel"
+        @ok="onOk"
+      >
+        <a-form ref="formRef" :model="formState" layout="vertical" name="form_in_modal">
+          <a-form-item
+            name="title"
+            label="Title"
+            :rules="[{ required: true, message: 'Please input the title of collection!' }]"
+          >
+            <a-input v-model:value="formState.title" />
+          </a-form-item>
+          <a-form-item name="description" label="Description">
+            <a-textarea v-model:value="formState.description" />
+          </a-form-item>
+          <a-form-item name="modifier" class="collection-create-form_last-form-item">
+            <a-radio-group v-model:value="formState.modifier">
+              <a-radio value="public">Public</a-radio>
+              <a-radio value="private">Private</a-radio>
+            </a-radio-group>
+          </a-form-item>
+        </a-form>
+      </a-modal>
     </div>
-</template>
-
-<script setup lang="ts">
-import { message } from 'ant-design-vue';
-import { ref } from 'vue';
-import type { UploadFile } from 'ant-design-vue';
-import { openNotificationWithIcon } from '@/utils/notification';
-
-// utils
-import { beforeUpload } from '@/utils/utils'
-
-// api
-import { upLoadFile } from '@/api/upload'
-
-// hooks
-import { useUploadFile } from '@/hooks/useUploadFile'
-const { loading, imageUrl, handleChange } = useUploadFile();
+  </template>
 
 
+<script lang="ts" setup>
+import { defineComponent, reactive, ref, toRaw } from 'vue';
+import type { FormInstance } from 'ant-design-vue';
 
-const fileList = ref<UploadFile[]>([]);
-let fileUrlList = ref<string[]>([])
+interface Values {
+  title: string;
+  description: string;
+  modifier: string;
+}
 
-// Custom upload function
-const customRequest = async (options) => {
-    console.log(options);
-    const { file, onSuccess, onError, onProgress } = options;
+ const formRef = ref<FormInstance>();
+    const visible = ref(false);
+    const formState = reactive<Values>({
+      title: '',
+      description: '',
+      modifier: 'public',
+    });
 
-    const formData = new FormData();
-    formData.append('uploadFile', file as any);
-    formData.append('bucket', 'cqminiv2-imgs');
-    formData.append('objectName', 'note');
-
-    try{
-        let res = await upLoadFile(formData);
-        console.log(res);
-        console.log(imageUrl);
-        if (res.data.code === "0") {
-            fileUrlList.value.push(res.data.data)
-            imageUrl.value = res.data.data;
-            openNotificationWithIcon("success", "上传成功！", "文件上传成功！");
-        }
-    }catch(err) {
-        message.error("上传失败!")
-    }
-
-};
-
+    const onOk = () => {
+      formRef.value
+        .validateFields()
+        .then(values => {
+          console.log('Received values of form: ', values);
+          console.log('formState: ', toRaw(formState));
+          visible.value = false;
+          formRef.value.resetFields();
+          console.log('reset formState: ', toRaw(formState));
+        })
+        .catch(info => {
+          console.log('Validate Failed:', info);
+        });
+    };
 </script>
-
+  

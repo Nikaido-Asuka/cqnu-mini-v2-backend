@@ -20,15 +20,15 @@
           <a-input
             v-model:value="form.username"
             autocomplete="new-username"
-            placeholder="管理员学号"
+            placeholder="请输入管理员学号"
             class="login-input h-[40px]"
           />
         </a-form-item>
         <a-form-item :required="true" name="password">
-          <a-input
+          <a-input-password
             v-model:value="form.password"
             autocomplete="new-password"
-            placeholder="默认123456"
+            placeholder="请输入密码"
             class="login-input h-[40px]"
             type="password"
           />
@@ -65,7 +65,7 @@
   }
   const loading = ref(false);
 
-  const form = reactive({
+  const form = reactive<LoginFormProps>({
     username: undefined,
     password: undefined,
   });
@@ -85,8 +85,9 @@
     }
 
     // const body = {
-    //     studentId: "2021404224421",
-    //     password: encryptLinker("123456"),
+    //   oldLinker: encryptLinker(""),
+    //   newLinker: encryptLinker("123456"),
+    //   confirmLinker: encryptLinker("123456")
     // }
 
     accountStore

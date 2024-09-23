@@ -133,6 +133,7 @@ let removeTagList = ref<Array<number>>([]);
 const handleCancel = () => {
     open.value = false;
     previewData.value = null;
+    imageUrl.value = '';
 }
 const handleConfirm = () => {
     previewData.value.tagList = previewData.value.tagList.filter(item => !removeTagList.value.includes(item.id));
@@ -149,6 +150,7 @@ const handleConfirm = () => {
         return ;
       }
       openNotificationWithIcon('success', '修改成功！', '成功修改小记的信息！')
+      imageUrl.value = '';
     }).catch(err => {
       openNotificationWithIcon('error', '修改失败！', err.message)
     })

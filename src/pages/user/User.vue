@@ -13,9 +13,11 @@ import { getUserList } from '@/api/user'
 
 // components
 import Modal from '@/components/modal'
+import { grade } from '../todo/constants';
 
 onMounted(async () => {
     handleSearch()
+    // handleCheck({ id: 10 });
 })
 
 // 查询相关
@@ -42,6 +44,8 @@ const pagination = reactive({
   showTotal: (total: number) => `共 ${total} 条`,
   onChange: (current: number, pageSize: number) => {
     pagination.current = current;
+    formState.current = current;
+    handleSearch();
   },
 })
 const handleChange = (e: any) => {
@@ -76,11 +80,12 @@ const handleClear = () => {
 
 interface User {
   id: number;
+  faculty: string;
   username: string;
   avatar: string;
-  grade: string;
-  college: string;
+  grade: number;
   major: string;
+  stuClass: string;
 }
 
 
@@ -111,11 +116,19 @@ let open = ref<boolean>(false);
 let previewData = ref<User | null>(null);
 const handleCancel = () => {
     open.value = false;
-    previewData.value = null;
+    previewData.value = {
+      id: 0,
+      faculty: '',
+      username: '',
+      avatar: '',
+      grade: 0,
+      major: '',
+      stuClass: ''
+    }
 }
 const handleCheck = ({ id }) => {
     open.value = true;
-    previewData.value = dataSource.value.filter(item => item.id === id);
+    previewData.value = dataSource.value.find(item => item.id === id);
     console.log(previewData.value);
 }
 
@@ -193,14 +206,14 @@ const getYearForGrade = (grade: number):string => {
 
     <div style="overflow-x: auto;">
       <a-table 
-        :scroll="{ x: 1200, y: 800 }" 
+        :scroll="{ x: 1500, y: 800 }" 
         :dataSource="dataSource" 
         :columns="columns"
         :pagination="pagination"
         >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'avatar'">
-            <img class=" w-[80px] h-[80px] rounded-[8px]" :src="record.avatar" alt=""/>
+            <img class=" w-[80px] h-[80px] rounded-[8px]" :src="record.avatar ? record.avatar : 'https://pic.imgdb.cn/item/6537b017c458853aefecf6c3.png' " alt=""/>
           </template>
 
           <template v-if="column.key === 'username'">
@@ -208,7 +221,7 @@ const getYearForGrade = (grade: number):string => {
           </template>
 
           <template v-if="column.key === 'grade'">
-            <span v-if="record.grade">{{ getYearForGrade(record.grade) }}</span>
+            <span v-if="record.grade">{{ record.grade }}</span>
             <span v-else>暂无数据</span>
           </template>
 
@@ -222,16 +235,52 @@ const getYearForGrade = (grade: number):string => {
       </a-table>
     </div>
 
-    <a-modal :visible="open" title="用户信息" @ok="handleCancel" @cancel="handleCancel">
-        <div>
-          <a-form
-            ref="formRef"
-            name="advanced_search"
-            :model="formState"
-          >
-          <div>{{ previewData }}</div>
-          </a-form>
+    <a-modal 
+      :visible="open" 
+      title="用户信息" 
+      @ok="handleCancel" 
+      @cancel="handleCancel"
+      okText="确认"
+      cancelText="取消"
+      width="800px"
+      >
+      <div class="px-5 py-5 w-full flex gap-10 justify-between items-stretch">
+        <div class="left flex flex-col items-center">
+            <img class="w-[150px] h-[150px]" :src="previewData.avatar ? previewData.avatar : 'https://pic.imgdb.cn/item/6537b017c458853aefecf6c3.png'" alt="" />
         </div>
+
+        <div class="right w-full px-1 py-3">
+            <a-row class=" mb-5" :span="24">
+                <a-col class="text-[20px]" :span="12">
+                    <label>用户名：</label>
+                    <a href="javasript:;">{{ previewData.username }}</a>
+                </a-col>
+                <a-col class="text-[20px]" :span="12">
+                    <label>学院：</label>
+                    <span>{{ previewData.faculty ? previewData.faculty : '暂无信息' }}</span>
+                </a-col>
+            </a-row>
+
+            <a-row class=" mb-5" :span="24">
+                <a-col class="text-[20px]" :span="12">
+                    <label>年级：</label>
+                    <span>{{ previewData.grade ? previewData.grade : '暂无信息' }}</span>
+                </a-col>
+                <a-col class="text-[20px]" :span="12">
+                    <label>专业：</label>
+                    <span>{{ previewData.major ? previewData.major : '暂无信息' }}</span>
+                </a-col>
+            </a-row>
+
+            <a-row :span="24">
+                <a-col class="text-[20px]" :span="24">
+                    <label>班级：</label>
+                    <span>{{ previewData.stuClass ? previewData.stuClass : '暂无信息' }}</span>
+                </a-col>
+            </a-row>
+        </div>
+    </div>
+
     </a-modal>
 
     <Modal 

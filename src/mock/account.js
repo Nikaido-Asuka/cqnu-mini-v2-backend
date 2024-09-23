@@ -33,10 +33,10 @@ Mock.mock('api/account', 'get', ({}) => {
     message: 'success',
     data: {
       account: {
-        username: 'iczer',
+        username: 'Asuka',
         age: 18,
         gender: 0,
-        avatar: 'http://portrait.gitee.com/uploads/avatars/user/691/2073535_iczer_1578965604.png!avatar30',
+        avatar: 'https://pic.imgdb.cn/item/654dd85ac458853aef824d3b.jpg',
       },
       role: 'admin',
       permissions: ['edit', 'delete', 'add'],

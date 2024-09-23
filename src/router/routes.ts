@@ -63,6 +63,33 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/todo')
   },
   {
+    name: 'tag',
+    path: '/tag',
+    meta: {
+      title: '标签管理',
+      icon: 'TagsOutlined',
+      // target: '_blank',
+      renderMenu: true,
+    },
+    children: [{
+      name: 'todotag',
+      path: '/todotag',
+      meta: {
+        title: '小记标签',
+        renderMenu: true,
+      },
+      component: () => import("@/pages/tag/todo")
+    },{
+      name: 'dishtag',
+      path: '/dishtag',
+      meta: {
+        title: '点评标签',
+        renderMenu: true,
+      },
+      component: () => import("@/pages/tag/dish")
+    }]
+  },
+  {
     name: 'test',
     path: '/test',
     meta: {
