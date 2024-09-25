@@ -90,6 +90,17 @@ const routes: RouteRecordRaw[] = [
     }]
   },
   {
+    name: 'announcement',
+    path: '/announcement',
+    meta: {
+      title: '公告管理',
+      icon: 'BookOutlined',
+      target: '_self',
+      renderMenu: true
+    },
+    component: () => import('@/pages/announcement')
+  },
+  {
     name: 'test',
     path: '/test',
     meta: {

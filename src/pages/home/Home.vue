@@ -12,7 +12,8 @@
 <template>
   <div class="home text-center flex flex-col justify-center">
     <div class="transform w-full">
-      <div class="tracking-wide slogan text-[3.5rem] xl:text-[5.25rem] font-extralight">
+      <div  class=" flex justify-center items-center gap-5 slogan text-[3.5rem] xl:text-[5.25rem] font-extralight">
+        <img class=" w-[100px] h-[100px] rounded-lg" src="../../assets/logo.jpeg" alt=""/>
         <span class="font-semibold">智慧重师 V2</span> 后台管理系统
       </div>
       <button

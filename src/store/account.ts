@@ -36,12 +36,14 @@ export const useAccountStore = defineStore('account', {
       return http
         .request('/user/admin/v1/login', 'post_json', body)
         .then(async (response) => {
-          console.log("response", response);
+          console.log(response);
           if (response.code === 'A000116'){
             openMessage('error', '用户名或密码错误！');
+            return Promise.reject(response);
           }
           if (response.code === 500) {
             openMessage('error', '网络连接错误！');
+            return Promise.reject(response);
           }
           if (response.code === 200) {
             this.logged = true;
@@ -51,7 +53,7 @@ export const useAccountStore = defineStore('account', {
           } else {
             return Promise.reject(response);
           }
-        });
+        })
     },
     async logout() {
       return new Promise<boolean>((resolve) => {

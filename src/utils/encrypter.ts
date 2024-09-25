@@ -1,19 +1,4 @@
 
-// import CryptoJS from 'crypto-js';
-// const AES_KEY = import.meta.env.VITE_AES_PRIVATE
-
-// // 加密函数
-
-// export function decryptPwd(plaintext) {
-//     const key = CryptoJS.enc.Base64.parse(AES_KEY);
-
-//     const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
-//         mode: CryptoJS.mode.ECB,
-//         padding: CryptoJS.pad.Pkcs7
-//     });
-
-//     return encrypted.ciphertext.toString(CryptoJS.enc.Base64);
-// }
 
 
 import CryptoJS from "crypto-js";

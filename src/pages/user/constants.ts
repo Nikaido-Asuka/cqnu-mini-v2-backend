@@ -52,16 +52,16 @@ export const columns = [
 export const gradeList = [
   {
     text: '2021',
-    value: 4,
+    value: 2021,
   },{
     text: '2022',
-    value: 3,
+    value: 2022,
   },{
     text: '2023',
-    value: 2
+    value: 2023
   },{
     text: '2024',
-    value: 1
+    value: 2024
   }
 ]
 

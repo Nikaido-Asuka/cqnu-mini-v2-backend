@@ -32,8 +32,8 @@ export default ({ command, mode }) => {
     server: {
       proxy: {
         '/api': {
-          target: env.VITE_API_BASE_URL,
-          // target: 'https://499710aw31.imdo.co',
+          // target: env.VITE_API_BASE_URL,
+          target: 'https://www.kancsd.cn',
           ws: true,
           changeOrigin: true,
           // rewrite: (path) => path.replace(/^\/api/, ''),

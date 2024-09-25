@@ -85,14 +85,15 @@
     }
 
     // const body = {
-    //   oldLinker: encryptLinker(""),
-    //   newLinker: encryptLinker("123456"),
-    //   confirmLinker: encryptLinker("123456")
+    //     studentId: '2021051615246',
+    //     password: encryptLinker('17729639582jzG'),
     // }
 
+    
     accountStore
       .login(body)
       .then((res) => {
+        console.log(res);
         emit('success', params);
       })
       .catch((e) => {
@@ -100,7 +101,6 @@
       })
       .finally(() => {
         loading.value = false;
-        router.push('/workplace')
       });
 
 

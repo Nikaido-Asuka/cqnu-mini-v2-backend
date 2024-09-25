@@ -2,6 +2,7 @@ import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import createHttp from '@/utils/axiosHttp';
 import { isResponse } from '@/types';
 import NProgress from 'nprogress';
+import { openNotificationWithIcon } from '@/utils/notification';
 
 const http = createHttp({
   timeout: 10000,
